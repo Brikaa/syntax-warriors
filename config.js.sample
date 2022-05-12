@@ -1,0 +1,6 @@
+module.exports.connection_options =
+{
+    host: "localhost",
+    user: "root",
+    password: "yourpassword"
+}
