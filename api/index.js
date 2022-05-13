@@ -10,6 +10,7 @@ const db = mysql.createConnection(db_config.connection_options);
 app.get('/', (req, res) => {
     db.query('select * from users;', (error, results, fields) => {
         res.send(fields);
+        console.log(error);
     });
 });
 

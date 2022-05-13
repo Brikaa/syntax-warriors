@@ -6,9 +6,9 @@
         "serve": "^13.0.2"
     },
     "scripts": {
-        "initdb": "cd db; node initialize.js",
-        "api": "cd api; nodemon index.js",
-        "migrate": "cd db; node migrate.js",
-        "serve": "cd front; npx serve"
+        "initdb": "cd db && node initialize.js",
+        "api": "cd api && nodemon index.js",
+        "migrate": "cd db && node migrate.js",
+        "front": "cd front && npx serve"
     }
 }
