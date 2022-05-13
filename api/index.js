@@ -9,24 +9,44 @@ const app = express();
 const port = config.port;
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
-app.use(cors())
+app.use(cors());
 
 const create_connection = () => {
     return mysql.createConnection(db_config.connection_options);
 };
 
-app.get('/', (req, res) => {
-    const db = create_connection();
-    db.query('select * from users;', (error, results, fields) => {
-        res.send(fields);
-    });
-    db.end();
-});
-
 app.post('/signup', (req, res) => {
-    const { username, email, password } = req.body;
-    console.log(req.body);
-    res.status(200).send();
+    try {
+        const { username, email, password } = req.body;
+        if (password.length < 8) {
+            return res.status(400).send('The password must be at least 8 characters long');
+        }
+        const db = create_connection();
+
+        db.query(
+            'select username, email from users where username = ? or email = ?',
+            [username, email],
+            (error, results) => {
+                if (results.length > 0) {
+                    console.log(results[0]);
+                    const what_already_exists = results[0].email === email ? 'email' : 'username';
+                    return res.status(400).send(`This ${what_already_exists} already exists`);
+                } else {
+                    db.query(
+                        'insert into users(email, username, password) values (?, ?, ?)',
+                        [email, username, password],
+                        () => {
+                            res.status(200).send();
+                        }
+                    );
+                    res.status(200).send();
+                }
+            }
+        );
+    } catch (e) {
+        console.log(e);
+        res.status(500).send();
+    }
 });
 
 app.listen(port, () => {
