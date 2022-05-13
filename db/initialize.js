@@ -10,6 +10,5 @@ const fs = require('fs/promises');
     console.log('Performing initial db sql statements');
     con.query(sql_statements);
 
-    con.end();
     console.log('Done');
 })();

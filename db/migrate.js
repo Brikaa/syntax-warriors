@@ -28,5 +28,4 @@ const migrations_file_path = './all_migrations.txt';
     }
 
     console.log('Applied all of the migrations');
-    con.end();
 })();
