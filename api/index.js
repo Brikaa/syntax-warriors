@@ -7,12 +7,8 @@ const port = config.port;
 
 app.get('/', (req, res) => {
     const db = mysql.createConnection(db_config.connection_options);
-    db.connect(function (err) {
-        if (err) throw err;
-        console.log('Initialized db connection');
-    });
     db.query('select * from users;', (error, results, fields) => {
-        res.send(results[0].username);
+        res.send(fields);
     });
     db.end();
 });

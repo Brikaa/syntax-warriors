@@ -7,11 +7,6 @@ const fs = require('fs/promises');
     const con = mysql.createConnection({ ...config.connection_options, multipleStatements: true });
     const sql_statements = await fs.readFile('./initialize.sql', { encoding: 'utf-8' });
 
-    con.connect(function (err) {
-        if (err) throw err;
-        console.log('Connected!');
-    });
-
     console.log('Performing initial db sql statements');
     con.query(sql_statements);
 
