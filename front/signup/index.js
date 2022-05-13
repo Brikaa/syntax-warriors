@@ -1,4 +1,4 @@
-import * as config from '../config.js';
+import * as http from '../http.js'
 
 (async () => {
     const signup_button = document.getElementById('signup_button');
@@ -11,21 +11,14 @@ import * as config from '../config.js';
         const username = username_field.value;
         const email = email_field.value;
         const password = password_field.value;
-        const response = await fetch(config.api_url + '/signup', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                username,
-                email,
-                password
-            }),
-            mode: 'cors'
+        const response = await http.post('/signup', {
+            username,
+            email,
+            password
         });
 
         if (response.status === 400) {
-            error_label.innerText = await response.text()
+            error_label.innerText = await response.text();
             return;
         }
         location = '/';

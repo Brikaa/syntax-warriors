@@ -21,6 +21,9 @@ app.post('/signup', (req, res) => {
         if (password.length < 8) {
             return res.status(400).send('The password must be at least 8 characters long');
         }
+        if (email.length < 1) {
+            return res.status(400).send('An email address must be provided');
+        }
         const db = create_connection();
 
         db.query(
