@@ -1,5 +1,8 @@
 {
-  "dependencies": {
-    "mysql": "^2.18.1"
-  }
+    "dependencies": {
+        "mysql": "^2.18.1"
+    },
+    "scripts": {
+        "initdb": "cd db; node initialize.js"
+    }
 }
