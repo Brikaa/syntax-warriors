@@ -11,4 +11,5 @@ const fs = require('fs/promises');
     con.query(sql_statements);
 
     console.log('Done');
+    con.end();
 })();
