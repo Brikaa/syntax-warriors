@@ -52,3 +52,18 @@ app.post('/signup', (req, res) => {
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
+
+const end_gracefully = () => {
+    console.log('Closing the database connection');
+    db.end();
+    console.log('Ending the prcess');
+    process.exit(0);
+}
+
+process.on('SIGINT', () => {
+    end_gracefully();
+})
+
+process.once('SIGUSR2', () => {
+    end_gracefully();
+})
