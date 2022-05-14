@@ -10,6 +10,15 @@ app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
 app.use(cors());
 
+app.post('/is_authorized', (req, res) => {
+    if (!req.headers.hasOwnProperty('authorization')) {
+        return res.status(200).send(false);
+    }
+    const username = str.slice(0, str.indexOf('-'));
+    const password = str.slice(str.indexOf('-') + 1);
+    return res.status(200).send(true);
+})
+
 app.post('/signup', async (req, res) => {
     const { username, email, password } = req.body;
 
