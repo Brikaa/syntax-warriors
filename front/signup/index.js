@@ -1,4 +1,4 @@
-import * as http from '../http.js'
+import * as http from '../http.js';
 
 (async () => {
     const signup_button = document.getElementById('signup_button');
@@ -19,6 +19,10 @@ import * as http from '../http.js'
 
         if (response.status === 400) {
             error_label.innerText = await response.text();
+            return;
+        }
+        if (response.status > 400) {
+            error_label.innerText = 'Internal server error';
             return;
         }
         location = '/';

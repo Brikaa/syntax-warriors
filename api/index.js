@@ -32,7 +32,7 @@ app.post('/signup', async (req, res) => {
             [username, email]
         );
         if (same_usernames.length > 0) {
-            const what_exists = same_usernames[0].email == email ? 'email' : 'username';
+            const what_exists = same_usernames[0].email === email ? 'email' : 'username';
             return res.status(400).send(`This ${what_exists} already exists`);
         }
         await db.query('insert into users (email, username, password) values (?, ?, ?)', [
