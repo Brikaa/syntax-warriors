@@ -22,11 +22,11 @@ const migrations_file_path = './all_migrations.txt';
             continue;
         }
         const migration_statements = fs.readFileSync('migrations/' + migration).toString();
-        con.query(migration_statements);
-        console.log('Applied ' + migration);
-        fs.writeFileSync(migrations_file_path, all_migrations.join('\n'));
+        con.query(migration_statements, () => {
+            console.log('Applied ' + migration);
+            fs.writeFileSync(migrations_file_path, all_migrations.join('\n'));
+        });
     }
 
-    console.log('Applied all of the migrations');
     con.end();
 })();
