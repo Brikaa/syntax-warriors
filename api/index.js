@@ -11,9 +11,7 @@ app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
 app.use(cors());
 
-const create_connection = () => {
-    return mysql.createConnection(db_config.connection_options);
-};
+const db = mysql.createConnection(db_config.connection_options);
 
 app.post('/signup', (req, res) => {
     try {
@@ -24,7 +22,6 @@ app.post('/signup', (req, res) => {
         if (email.length < 1) {
             return res.status(400).send('An email address must be provided');
         }
-        const db = create_connection();
 
         db.query(
             'select username, email from users where username = ? or email = ?',
