@@ -22,6 +22,9 @@ app.post('/signup', async (req, res) => {
     if (username.length < 1) {
         return res.status(400).send('A username must be provided');
     }
+    if (username.match('[^A-Za-z0-9]')) {
+        return res.status(400).send('The username must contain letters and numbers only');
+    }
 
     try {
         const same_usernames = await db.query(
