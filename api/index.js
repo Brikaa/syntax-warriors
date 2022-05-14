@@ -10,32 +10,41 @@ app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.post('/is_authorized', (req, res) => {
+app.post('/is_authorized', async (req, res) => {
     if (!req.headers.hasOwnProperty('authorization')) {
         return res.status(200).send(false);
     }
-    const username = str.slice(0, str.indexOf('-'));
-    const password = str.slice(str.indexOf('-') + 1);
+    const auth_str = req.headers.authorization;
+    const username = auth_str.slice(0, auth_str.indexOf('-'));
+    const password = auth_str.slice(auth_str.indexOf('-') + 1);
+    console.log({ username, password });
+    const users = await db.query('select username from users where username = ? and password = ?', [
+        username,
+        password
+    ]);
+    if (users.length < 1) {
+        return res.status(200).send(false);
+    }
     return res.status(200).send(true);
-})
+});
 
 app.post('/signup', async (req, res) => {
-    const { username, email, password } = req.body;
-
-    if (password.length < 8) {
-        return res.status(400).send('The password must be at least 8 characters long');
-    }
-    if (email.length < 1) {
-        return res.status(400).send('An email address must be provided');
-    }
-    if (username.length < 1) {
-        return res.status(400).send('A username must be provided');
-    }
-    if (username.match('[^A-Za-z0-9]')) {
-        return res.status(400).send('The username must contain letters and numbers only');
-    }
-
     try {
+        const { username, email, password } = req.body;
+
+        if (password.length < 8) {
+            return res.status(400).send('The password must be at least 8 characters long');
+        }
+        if (email.length < 1) {
+            return res.status(400).send('An email address must be provided');
+        }
+        if (username.length < 1) {
+            return res.status(400).send('A username must be provided');
+        }
+        if (username.match('[^A-Za-z0-9]')) {
+            return res.status(400).send('The username must contain letters and numbers only');
+        }
+
         const same_usernames = await db.query(
             'select username, email from users where username = ? or email = ?',
             [username, email]

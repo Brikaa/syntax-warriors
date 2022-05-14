@@ -1,3 +1,4 @@
+import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
@@ -25,6 +26,7 @@ import * as http from '/helpers/http.js';
             error_label.innerText = 'Internal server error';
             return;
         }
+        auth.authorize(username, password);
         location.replace('/');
     });
 })();
