@@ -1,4 +1,4 @@
-import * as http from '../http.js';
+import * as http from '../helpers/http.js';
 
 (async () => {
     const signup_button = document.getElementById('signup_button');
