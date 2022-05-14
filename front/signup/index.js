@@ -1,4 +1,4 @@
-import * as http from '../helpers/http.js';
+import * as http from '/helpers/http.js';
 
 (async () => {
     const signup_button = document.getElementById('signup_button');
@@ -25,6 +25,6 @@ import * as http from '../helpers/http.js';
             error_label.innerText = 'Internal server error';
             return;
         }
-        location = '/';
+        location.replace('/');
     });
 })();
