@@ -13,14 +13,26 @@
 <body>
     <h1>Sign up</h1>
     <a href="/login">Or Login</a>
-    <p>Username</p>
-    <input id="username" />
-    <p>Email</p>
-    <input id="email" />
-    <p>Password</p>
-    <input id="password" type="password" />
-    <p><button id="signup_button">Sign up</button></p>
-    <p><label id="error_label"></label></p>
+    <form id="signup_form">
+        <p>
+            <label>Username</label> <br />
+            <input id="username" type="text" />
+        </p>
+        <p>
+            <label>Email</label> <br />
+            <input id="email" type="email" />
+        </p>
+        <p>
+            <label>Password</label> <br />
+            <input id="password" type="password" minlength="8" />
+        </p>
+        <p>
+            <input id="signup_button" type="submit" value="Sign up" />
+        </p>
+        <p>
+            <label id="error_label"></label>
+        </p>
+    </form>
 
 </body>
 

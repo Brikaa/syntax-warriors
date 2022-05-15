@@ -2,13 +2,14 @@ import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
-    const signup_button = document.getElementById('signup_button');
+    const form = document.getElementById('signup_form');
     const username_field = document.getElementById('username');
     const email_field = document.getElementById('email');
     const password_field = document.getElementById('password');
     const error_label = document.getElementById('error_label');
 
-    signup_button.addEventListener('click', async () => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         const username = username_field.value;
         const email = email_field.value;
         const password = password_field.value;
