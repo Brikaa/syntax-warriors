@@ -5,8 +5,13 @@ export const authorize = (username, password) => {
 };
 
 export const is_authorized = async () => {
-    const is_authorized_req = await http.post('/is_authorized');
-    const is_authorized_str = await is_authorized_req.text();
-    const is_authorized = is_authorized_str === 'true';
-    return is_authorized;
-};
+    const user_req = await http.post('/get_user');
+    const user_json = await user_req.json();
+    return user_json.user !== null;
+}
+
+export const get_user = async () => {
+    const user_req = await http.post('/get_user');
+    const user_json = await user_req.json();
+    return user_json.user;
+}

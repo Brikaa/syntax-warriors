@@ -18,22 +18,25 @@ const validate_username = (username) => {
     return !username.match('[^A-Za-z0-9]');
 };
 
-app.post('/is_authorized', async (req, res) => {
+app.post('/get_user', async (req, res) => {
     try {
         if (!req.headers.hasOwnProperty('authorization')) {
-            return res.status(200).send(false);
+            return res.status(200).json({ user: null });
         }
         const auth_str = req.headers.authorization;
         const username = auth_str.slice(0, auth_str.indexOf('-'));
         if (!validate_username(username)) {
-            return res.status(200).send(false);
+            return res.status(200).json({ user: null });
         }
         const password = auth_str.slice(auth_str.indexOf('-') + 1);
         const users = await db.query(
             'select username from users where username = ? and password = ?',
             [username, password]
         );
-        return res.status(200).send(users.length >= 1);
+        if (users.length < 1) {
+            return res.status(200).json({ user: null });
+        }
+        return res.status(200).json({ user: users[0] });
     } catch (e) {
         return res.status(500).send();
     }
