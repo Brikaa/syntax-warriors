@@ -10,6 +10,14 @@ import * as http from '/helpers/http.js';
         error_label: document.getElementById('signup_error_label')
     };
 
+    const signin_elements = {
+        form: document.getElementById('signin_form'),
+        username_field: document.getElementById('signin_username'),
+        email_field: document.getElementById('signin_email'),
+        password_field: document.getElementById('signin_password'),
+        error_label: document.getElementById('signin_error_label')
+    };
+
     signup_elements.form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = signup_elements.username_field.value;
@@ -31,5 +39,17 @@ import * as http from '/helpers/http.js';
         }
         auth.authorize(username, password);
         location.replace('/');
+    });
+
+    signin_elements.form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = signin_elements.username_field.value;
+        const password = signin_elements.password_field.value;
+        auth.authorize(username, password);
+        const is_authorized = await auth.is_authorized();
+        if (is_authorized) {
+            return location.replace('/');
+        }
+        signin_elements.error_label.innerText = 'Invalid username or password';
     });
 })();

@@ -14,22 +14,29 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+const validate_username = (username) => {
+    return !username.match('[^A-Za-z0-9]');
+};
+
 app.post('/is_authorized', async (req, res) => {
-    if (!req.headers.hasOwnProperty('authorization')) {
-        return res.status(200).send(false);
+    try {
+        if (!req.headers.hasOwnProperty('authorization')) {
+            return res.status(200).send(false);
+        }
+        const auth_str = req.headers.authorization;
+        const username = auth_str.slice(0, auth_str.indexOf('-'));
+        if (!validate_username(username)) {
+            return res.status(200).send(false);
+        }
+        const password = auth_str.slice(auth_str.indexOf('-') + 1);
+        const users = await db.query(
+            'select username from users where username = ? and password = ?',
+            [username, password]
+        );
+        return res.status(200).send(users.length >= 1);
+    } catch (e) {
+        return res.status(500).send();
     }
-    const auth_str = req.headers.authorization;
-    const username = auth_str.slice(0, auth_str.indexOf('-'));
-    const password = auth_str.slice(auth_str.indexOf('-') + 1);
-    console.log({ username, password });
-    const users = await db.query('select username from users where username = ? and password = ?', [
-        username,
-        password
-    ]);
-    if (users.length < 1) {
-        return res.status(200).send(false);
-    }
-    return res.status(200).send(true);
 });
 
 app.post('/signup', async (req, res) => {
@@ -56,7 +63,7 @@ app.post('/signup', async (req, res) => {
         ) {
             return res.status(400).send('A string username must be provided');
         }
-        if (username.match('[^A-Za-z0-9]')) {
+        if (!validate_username(username)) {
             return res.status(400).send('The username must contain letters and/or numbers only');
         }
 
