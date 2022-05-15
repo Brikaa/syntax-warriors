@@ -5,4 +5,8 @@ import * as auth from '/helpers/auth.js';
     if (user === null) {
         return location.replace('/signup');
     }
+    document.getElementById('logout').addEventListener('click', () => {
+        localStorage.removeItem('auth-token');
+        location.reload();
+    });
 })();
