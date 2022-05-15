@@ -8,7 +8,11 @@ const app = express();
 const port = config.port;
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
-app.use(cors());
+const corsOptions = {
+    origin: config.front_url,
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 app.post('/is_authorized', async (req, res) => {
     if (!req.headers.hasOwnProperty('authorization')) {
