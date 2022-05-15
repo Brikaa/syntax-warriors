@@ -9,4 +9,5 @@ import * as auth from '/helpers/auth.js';
         localStorage.removeItem('auth-token');
         location.reload();
     });
+    document.getElementById('username').innerHTML = `logged in as ${user.username}`;
 })();
