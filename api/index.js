@@ -35,20 +35,32 @@ app.post('/is_authorized', async (req, res) => {
 app.post('/signup', async (req, res) => {
     try {
         const { username, email, password } = req.body;
-
-        if (password.length < 8) {
-            return res.status(400).send('The password must be at least 8 characters long');
+        console.log(typeof username);
+        // Validate body data
+        if (
+            !req.body.hasOwnProperty('password') ||
+            typeof password !== 'string' ||
+            password.length < 8
+        ) {
+            return res
+                .status(400)
+                .send('A string password that is at least 8 characters long must be provided');
         }
-        if (email.length < 1) {
-            return res.status(400).send('An email address must be provided');
+        if (!req.body.hasOwnProperty('email') || typeof email !== 'string' || email.length < 1) {
+            return res.status(400).send('A string email address must be provided');
         }
-        if (username.length < 1) {
-            return res.status(400).send('A username must be provided');
+        if (
+            !req.body.hasOwnProperty('username') ||
+            typeof username !== 'string' ||
+            username.length < 1
+        ) {
+            return res.status(400).send('A string username must be provided');
         }
         if (username.match('[^A-Za-z0-9]')) {
-            return res.status(400).send('The username must contain letters and numbers only');
+            return res.status(400).send('The username must contain letters and/or numbers only');
         }
 
+        // Create user if doesn't exist
         const same_usernames = await db.query(
             'select username, email from users where username = ? or email = ?',
             [username, email]

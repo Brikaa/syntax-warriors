@@ -15,18 +15,18 @@
     <form id="signup_form">
         <p>
             <label>Username</label> <br />
-            <input id="signup_username" type="text" />
+            <input id="signup_username" type="text" required>
         </p>
         <p>
             <label>Email</label> <br />
-            <input id="signup_email" type="email" />
+            <input id="signup_email" type="email" required>
         </p>
         <p>
             <label>Password</label> <br />
-            <input id="signup_password" type="password" minlength="8" />
+            <input id="signup_password" type="password" minlength="8" required>
         </p>
         <p>
-            <input id="signup_button" type="submit" value="Sign up" />
+            <input id="signup_button" type="submit" value="Sign up" required>
         </p>
         <p>
             <label id="signup_error_label"></label>
@@ -37,14 +37,14 @@
     <form id="signin_form">
         <p>
             <label>Username or email</label> <br />
-            <input id="signin_username" type="text" />
+            <input id="signin_username" type="text" required>
         </p>
         <p>
             <label>Password</label> <br />
-            <input id="signin_password" type="password" minlength="8" />
+            <input id="signin_password" type="password" minlength="8" required>
         </p>
         <p>
-            <input id="signin_button" type="submit" value="Sign in" />
+            <input id="signin_button" type="submit" value="Sign in" required>
         </p>
         <p>
             <label id="signin_error_label"></label>
