@@ -12,25 +12,42 @@
 
 <body>
     <h1>Sign up</h1>
-    <a href="/login">Or Login</a>
     <form id="signup_form">
         <p>
             <label>Username</label> <br />
-            <input id="username" type="text" />
+            <input id="signup_username" type="text" />
         </p>
         <p>
             <label>Email</label> <br />
-            <input id="email" type="email" />
+            <input id="signup_email" type="email" />
         </p>
         <p>
             <label>Password</label> <br />
-            <input id="password" type="password" minlength="8" />
+            <input id="signup_password" type="password" minlength="8" />
         </p>
         <p>
             <input id="signup_button" type="submit" value="Sign up" />
         </p>
         <p>
-            <label id="error_label"></label>
+            <label id="signup_error_label"></label>
+        </p>
+    </form>
+
+    <h1>Sign in</h1>
+    <form id="signin_form">
+        <p>
+            <label>Username or email</label> <br />
+            <input id="signin_username" type="text" />
+        </p>
+        <p>
+            <label>Password</label> <br />
+            <input id="signin_password" type="password" minlength="8" />
+        </p>
+        <p>
+            <input id="signin_button" type="submit" value="Sign in" />
+        </p>
+        <p>
+            <label id="signin_error_label"></label>
         </p>
     </form>
 

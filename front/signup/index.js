@@ -2,17 +2,19 @@ import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
-    const form = document.getElementById('signup_form');
-    const username_field = document.getElementById('username');
-    const email_field = document.getElementById('email');
-    const password_field = document.getElementById('password');
-    const error_label = document.getElementById('error_label');
+    const signup_elements = {
+        form: document.getElementById('signup_form'),
+        username_field: document.getElementById('signup_username'),
+        email_field: document.getElementById('signup_email'),
+        password_field: document.getElementById('signup_password'),
+        error_label: document.getElementById('signup_error_label')
+    };
 
-    form.addEventListener('submit', async (e) => {
+    signup_elements.form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const username = username_field.value;
-        const email = email_field.value;
-        const password = password_field.value;
+        const username = signup_elements.username_field.value;
+        const email = signup_elements.email_field.value;
+        const password = signup_elements.password_field.value;
         const response = await http.post('/signup', {
             username,
             email,
@@ -20,11 +22,11 @@ import * as http from '/helpers/http.js';
         });
 
         if (response.status === 400) {
-            error_label.innerText = await response.text();
+            signup_elements.error_label.innerText = await response.text();
             return;
         }
         if (response.status > 400) {
-            error_label.innerText = 'Internal server error';
+            signup_elements.error_label.innerText = 'Internal server error';
             return;
         }
         auth.authorize(username, password);
