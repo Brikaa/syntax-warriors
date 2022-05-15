@@ -10,6 +10,7 @@
     "scripts": {
         "initdb": "cd db && node initialize.js",
         "api": "cd api && nodemon index.js",
+        "create_migration": "cd db && node create_migration.js",
         "migrate": "cd db && node migrate.js",
         "front": "cd front && npx serve"
     }
