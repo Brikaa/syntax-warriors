@@ -5,8 +5,8 @@ import * as auth from '/helpers/auth.js';
     if (user === null) {
         return location.replace('/signup');
     }
-    document.getElementById('logout').addEventListener('click', () => {
-        localStorage.removeItem('auth-token');
+    document.getElementById('signout').addEventListener('click', () => {
+        auth.sign_out();
         location.reload();
     });
     document.getElementById('username').innerHTML = `logged in as ${user.username}`;

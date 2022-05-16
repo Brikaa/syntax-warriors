@@ -14,21 +14,21 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-const validate_username = (username) => {
-    return !username.match('[^A-Za-z0-9]');
-};
-
 app.post('/get_user', async (req, res) => {
     try {
-        if (!req.headers.hasOwnProperty('authorization')) {
-            return res.status(200).json({ user: null });
+        if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('password')) {
+            return res.status(400).send('A username and password are required in the request body');
         }
-        const auth_str = req.headers.authorization;
-        const username = auth_str.slice(0, auth_str.indexOf('-'));
-        if (!validate_username(username)) {
-            return res.status(200).json({ user: null });
+        const { username, password } = req.body;
+        if (username === null || password === null) {
+            return res.status(200).send({ user: null });
         }
-        const password = auth_str.slice(auth_str.indexOf('-') + 1);
+        if (typeof username !== 'string') {
+            return res.status(400).send('The username must be provided as a string');
+        }
+        if (typeof password !== 'string') {
+            return res.status(400).send('The password must be provided as a string');
+        }
         const users = await db.query(
             'select username from users where username = ? and password = ?',
             [username, password]
@@ -38,6 +38,7 @@ app.post('/get_user', async (req, res) => {
         }
         return res.status(200).json({ user: users[0] });
     } catch (e) {
+        console.error(e);
         return res.status(500).send();
     }
 });
@@ -45,7 +46,6 @@ app.post('/get_user', async (req, res) => {
 app.post('/signup', async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        console.log(typeof username);
         // Validate body data
         if (
             !req.body.hasOwnProperty('password') ||
@@ -66,7 +66,7 @@ app.post('/signup', async (req, res) => {
         ) {
             return res.status(400).send('A string username must be provided');
         }
-        if (!validate_username(username)) {
+        if (username.match('[^A-Za-z0-9]')) {
             return res.status(400).send('The username must contain letters and/or numbers only');
         }
 
