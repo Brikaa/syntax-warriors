@@ -9,5 +9,5 @@ import * as auth from '/helpers/auth.js';
         auth.sign_out();
         location.reload();
     });
-    document.getElementById('username').innerHTML = `logged in as ${user.username}`;
+    document.getElementById('username').innerHTML = `signed in as <a href="/profile">${user.username}`;
 })();

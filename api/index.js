@@ -30,7 +30,7 @@ app.post('/get_user', async (req, res) => {
             return res.status(400).send('The password must be provided as a string');
         }
         const users = await db.query(
-            'select username from users where username = ? and password = ?',
+            'select username, email, no_wins, score from users where username = ? and password = ?',
             [username, password]
         );
         if (users.length < 1) {

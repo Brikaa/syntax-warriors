@@ -2,6 +2,10 @@ import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
+    if (auth.is_authorized()) {
+        return location.replace('/');
+    }
+
     const signup_elements = {
         form: document.getElementById('signup_form'),
         username_field: document.getElementById('signup_username'),
