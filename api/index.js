@@ -14,11 +14,34 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+class RequestBodyException {
+    constructor(message) {
+        this.message = message;
+    }
+}
+
+const handle_api_errors = (e, res) => {
+    if (e instanceof RequestBodyException) {
+        return res.status(400).send(e.message);
+    }
+    console.error(e);
+    return res.status(500);
+};
+
+const check_missing_properties = (req_body, required_properties) => {
+    const missing_properties = required_properties.filter((p) => req_body.hasOwnProperty(p));
+    console.log({ req_body, required_properties, missing_properties });
+    if (missing_properties.length > 0) {
+        throw new RequestBodyException(
+            'Missing request body properties: ' + missing_properties.join(', ')
+        );
+    }
+};
+
 app.post('/get_user', async (req, res) => {
     try {
-        if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('password')) {
-            return res.status(400).send('A username and password are required in the request body');
-        }
+        check_missing_properties(req.body, ['username', 'password']);
+        console.log(req.body);
         const { username, password } = req.body;
         if (username === null || password === null) {
             return res.status(200).send({ user: null });
@@ -38,32 +61,24 @@ app.post('/get_user', async (req, res) => {
         }
         return res.status(200).json({ user: users[0] });
     } catch (e) {
-        console.error(e);
-        return res.status(500).send();
+        handle_api_errors(e, res);
     }
 });
 
 app.post('/signup', async (req, res) => {
     try {
+        check_missing_properties(req.body, ['username', 'email', 'password']);
         const { username, email, password } = req.body;
         // Validate body data
-        if (
-            !req.body.hasOwnProperty('password') ||
-            typeof password !== 'string' ||
-            password.length < 8
-        ) {
+        if (typeof password !== 'string' || password.length < 8) {
             return res
                 .status(400)
                 .send('A string password that is at least 8 characters long must be provided');
         }
-        if (!req.body.hasOwnProperty('email') || typeof email !== 'string' || email.length < 1) {
+        if (typeof email !== 'string' || email.length < 1) {
             return res.status(400).send('A string email address must be provided');
         }
-        if (
-            !req.body.hasOwnProperty('username') ||
-            typeof username !== 'string' ||
-            username.length < 1
-        ) {
+        if (typeof username !== 'string' || username.length < 1) {
             return res.status(400).send('A string username must be provided');
         }
         if (username.match('[^A-Za-z0-9]')) {
@@ -86,8 +101,7 @@ app.post('/signup', async (req, res) => {
         ]);
         return res.status(200).send();
     } catch (e) {
-        console.error(e);
-        return res.status(500).send();
+        handle_api_errors(e, res);
     }
 });
 

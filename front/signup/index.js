@@ -2,7 +2,9 @@ import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
-    if (auth.is_authorized()) {
+    const is_authorized = await auth.is_authorized();
+    if (is_authorized) {
+        console.log('user is authorized');
         return location.replace('/');
     }
 
