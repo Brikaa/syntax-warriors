@@ -44,34 +44,27 @@ const validate_data_types = (data, types) => {
 // User actions
 const validate_user_info = async (user_info) => {
     const { username, email, password } = user_info;
-    return new Promise(async (resolve, reject) => {
-        try {
-            validate_data_types([username, email, password], ['string', 'string', 'string']);
-        } catch (e) {
-            reject(e);
-        }
-        if (username === '') {
-            reject(new RequestBodyException('The username can not be empty'));
-        }
-        if (password.length < 8) {
-            reject(new RequestBodyException('The password can not be less than 8 characters long'));
-        }
-        if (email === '') {
-            reject(new RequestBodyException('The email can not be empty'));
-        }
-        if (username.match('[^A-Za-z0-9]')) {
-            reject(new RequestBodyException('The username must contain letters or numbers only'));
-        }
-        const same_usernames = await db.query(
-            'select username, email from users where username = ? or email = ?',
-            [username, email]
-        );
-        if (same_usernames.length > 0) {
-            const what_exists = same_usernames[0].email === email ? 'email' : 'username';
-            reject(new RequestBodyException(`This ${what_exists} already exists`));
-        }
-        resolve();
-    });
+    validate_data_types([username, email, password], ['string', 'string', 'string']);
+    if (username === '') {
+        throw new RequestBodyException('The username can not be empty');
+    }
+    if (password.length < 8) {
+        throw new RequestBodyException('The password can not be less than 8 characters long');
+    }
+    if (email === '') {
+        throw new RequestBodyException('The email can not be empty');
+    }
+    if (username.match('[^A-Za-z0-9]')) {
+        throw new RequestBodyException('The username must contain letters or numbers only');
+    }
+    const same_usernames = await db.query(
+        'select username, email from users where username = ? or email = ?',
+        [username, email]
+    );
+    if (same_usernames.length > 0) {
+        const what_exists = same_usernames[0].email === email ? 'email' : 'username';
+        throw new RequestBodyException(`This ${what_exists} already exists`);
+    }
 };
 
 app.post('/get_user', async (req, res) => {
