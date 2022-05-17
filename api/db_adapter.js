@@ -2,6 +2,11 @@ const mysql = require('mysql');
 const db_config = require('../db/config');
 
 const conn = mysql.createConnection(db_config.connection_options);
+conn.connect((err) => {
+    if (err) {
+        throw err;
+    }
+});
 
 module.exports.query = async (query_string, query_values = []) => {
     let results;
