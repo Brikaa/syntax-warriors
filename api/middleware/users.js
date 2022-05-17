@@ -65,7 +65,7 @@ const get_user = async (user_info) => {
     validate_data_types(user_info, { username: 'string', password: 'string' });
 
     const users = await db.query(
-        'select id, username, email, no_wins, score from users where username = ? and password = ?',
+        'select id, username, email, no_wins, score, is_staff from users where username = ? and password = ?',
         [username, password]
     );
 
