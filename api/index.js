@@ -15,7 +15,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
-    if (!req.headers['content-type'].startsWith('application/json')) {
+    if (
+        !req.headers.hasOwnProperty('content-type') ||
+        !req.headers['content-type'].startsWith('application/json')
+    ) {
         return res.status(415).send({
             message: 'requests must be of type application/json'
         });
@@ -193,7 +196,7 @@ app.use((err, req, res, next) => {
     if (err instanceof RequestBodyException) {
         return res.status(400).send(err.message);
     }
-    console.error(e);
+    console.error(err);
     return res.status(500).send();
 });
 
