@@ -14,29 +14,25 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+    if (!req.headers['content-type'].startsWith('application/json')) {
+        return res.status(415).send({
+            message: 'requests must be of type application/json'
+        });
+    }
+    next();
+});
+
 class RequestBodyException {
     constructor(message) {
         this.message = message;
     }
 }
 
-const handle_api_errors = (e, res) => {
-    if (e instanceof RequestBodyException) {
-        return res.status(400).send(e.message);
-    }
-    console.error(e);
-    return res.status(500);
-};
-
-const validate_data_types = (data, types) => {
-    if (data.length !== types.length) {
-        throw new Error('Provided data does not match types array');
-    }
-    for (let i = 0; i < types.length; ++i) {
-        if (typeof data[i] !== types[i]) {
-            throw new RequestBodyException(
-                `Invalid data type for ${data[i]}, expected: ${types[i]}`
-            );
+const validate_data_types = (what_to_validate, data_types) => {
+    for (const field in data_types) {
+        if (typeof what_to_validate[field] !== data_types[field]) {
+            throw new RequestBodyException(`${field} must be provided as ${data_types[field]}`);
         }
     }
 };
@@ -44,7 +40,7 @@ const validate_data_types = (data, types) => {
 // User actions
 const validate_user_info = (user_info) => {
     const { username, email, password } = user_info;
-    validate_data_types([username, email, password], ['string', 'string', 'string']);
+    validate_data_types(user_info, { username: 'string', email: 'string', password: 'string' });
     if (username === '') {
         throw new RequestBodyException('The username can not be empty');
     }
@@ -91,7 +87,7 @@ const get_user = async (user_info) => {
         return null;
     }
 
-    validate_data_types([username, password], ['string', 'string']);
+    validate_data_types(user_info, { username: 'string', password: 'string' });
 
     const users = await db.query(
         'select id, username, email, no_wins, score from users where username = ? and password = ?',
@@ -104,15 +100,15 @@ const get_user = async (user_info) => {
     return users[0];
 };
 
-app.post('/get_user', async (req, res) => {
+app.post('/get_user', async (req, res, next) => {
     try {
         return res.status(200).json({ user: await get_user(req.body) });
     } catch (e) {
-        handle_api_errors(e, res);
+        next(e);
     }
 });
 
-app.post('/signup', async (req, res) => {
+app.post('/signup', async (req, res, next) => {
     try {
         validate_user_info(req.body);
         await check_same_user(req.body.username, req.body.email);
@@ -124,11 +120,11 @@ app.post('/signup', async (req, res) => {
         ]);
         return res.status(200).send();
     } catch (e) {
-        handle_api_errors(e, res);
+        next(e);
     }
 });
 
-app.post('/update_user', async (req, res) => {
+app.post('/update_user', async (req, res, next) => {
     try {
         const user = await get_user(req.body);
         if (user === null) {
@@ -189,8 +185,16 @@ app.post('/update_user', async (req, res) => {
 
         return res.status(200).send();
     } catch (e) {
-        handle_api_errors(e, res);
+        next(e);
     }
+});
+
+app.use((err, req, res, next) => {
+    if (err instanceof RequestBodyException) {
+        return res.status(400).send(err.message);
+    }
+    console.error(e);
+    return res.status(500).send();
 });
 
 app.listen(port, () => {
