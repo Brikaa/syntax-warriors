@@ -8,10 +8,10 @@
         "serve": "^13.0.2"
     },
     "scripts": {
-        "initdb": "cd db && node initialize.js",
-        "api": "cd api && nodemon index.js",
-        "create_migration": "cd db && node create_migration.js",
-        "migrate": "cd db && node migrate.js",
-        "front": "cd front && npx serve"
+        "initdb": "node db/initialize.js",
+        "api": "nodemon api/index.js",
+        "create_migration": "node db/create_migration.js",
+        "migrate": "node db/migrate.js",
+        "front": "serve front"
     }
 }
