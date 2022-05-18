@@ -11,6 +11,6 @@ import * as auth from '/helpers/auth.js';
     });
     document.getElementById('username').innerHTML = `Signed in as ${user.username}`;
     if (!!(user.is_staff)) {
-        document.getElementById('admin').style.display = 'initial';
+        document.getElementById('admin').removeAttribute('hidden');
     }
 })();
