@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,12 +12,19 @@
 </head>
 
 <body>
+    <a href="/">Home</a>
     <h1>Create contest</h1>
     <form id="form">
         <label>Name</label><br>
-        <input type="text" id="name"/><br><br>
+        <input type="text" id="name" /><br><br>
         <label>Description</label><br>
         <textarea id="description"></textarea><br><br>
-        <input type="submit" id="submit" value="Create contest"/>
+        <label>Start date</label><br>
+        <input type="datetime-local" id="start_date" /><br><br>
+        <label>End date</label><br>
+        <input type="datetime-local" id="end_date" /><br><br>
+        <span id="test_cases_area"></span> <br><br>
+        <input type="button" id="add_test_case" value="Add test case" />
+        <input type="submit" id="submit" value="Create contest" />
     </form>
 </body>
