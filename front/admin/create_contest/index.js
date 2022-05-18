@@ -1,4 +1,5 @@
 import * as auth from '/helpers/auth.js';
+import * as http from '/helpers/http.js';
 
 (async () => {
     const is_authorized = await auth.is_authorized();
@@ -10,7 +11,8 @@ import * as auth from '/helpers/auth.js';
         description: document.getElementById('description'),
         test_cases_area: document.getElementById('test_cases_area'),
         start_date: document.getElementById('start_date'),
-        end_date: document.getElementById('end_date')
+        end_date: document.getElementById('end_date'),
+        error: document.getElementById('error')
     };
 
     const test_cases_elements = [];
@@ -48,10 +50,23 @@ import * as auth from '/helpers/auth.js';
             input: input_area,
             output: output_area
         });
-        console.log(test_cases_elements);
     });
-    document.getElementById('submit').addEventListener('click', (e) => {
+    document.getElementById('submit').addEventListener('click', async (e) => {
         e.preventDefault();
-        console.log(contests_elements.name.value);
+        const response = await http.post('/create_contest', {
+            name: contests_elements.name.value,
+            description: contests_elements.description.value,
+            start_date: contests_elements.start_date.value,
+            end_date: contests_elements.end_date.value
+        });
+        if (response.status === 400) {
+            contests_elements.error.innerText = await response.text();
+            return;
+        }
+        if (response.status >= 400) {
+            contests_elements.error.innerText = 'An error has occurred';
+            return;
+        }
+        location.replace('/');
     });
 })();

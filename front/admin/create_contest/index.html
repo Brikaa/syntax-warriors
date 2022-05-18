@@ -16,15 +16,16 @@
     <h1>Create contest</h1>
     <form id="form">
         <label>Name</label><br>
-        <input type="text" id="name" /><br><br>
+        <input type="text" id="name" required /><br><br>
         <label>Description</label><br>
         <textarea id="description"></textarea><br><br>
         <label>Start date</label><br>
-        <input type="datetime-local" id="start_date" /><br><br>
+        <input type="datetime-local" id="start_date" required /><br><br>
         <label>End date</label><br>
-        <input type="datetime-local" id="end_date" /><br><br>
+        <input type="datetime-local" id="end_date" required /><br><br>
         <span id="test_cases_area"></span> <br><br>
         <input type="button" id="add_test_case" value="Add test case" />
-        <input type="submit" id="submit" value="Create contest" />
+        <input type="submit" id="submit" value="Create contest" /> <br><br>
+        <label id="error"></label>
     </form>
 </body>

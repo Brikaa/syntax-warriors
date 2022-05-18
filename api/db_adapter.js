@@ -10,10 +10,10 @@ conn.connect((err) => {
 
 module.exports.query = async (query_string, query_values = []) => {
     let results;
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
         conn.query(query_string, query_values, (e, r) => {
             if (e) {
-                throw e;
+                reject(e);
             }
             results = r;
             resolve();
