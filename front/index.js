@@ -9,7 +9,7 @@ import * as auth from '/helpers/auth.js';
         auth.sign_out();
         location.reload();
     });
-    document.getElementById('username').innerHTML = `Signed in as ${user.username}`;
+    document.getElementById('username').innerText = `Signed in as ${user.username}`;
     if (!!(user.is_staff)) {
         document.getElementById('admin').removeAttribute('hidden');
     }

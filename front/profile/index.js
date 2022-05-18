@@ -17,8 +17,8 @@ import * as http from '/helpers/http.js';
     };
     user_elements.username.value = user.username;
     user_elements.email.value = user.email;
-    user_elements.no_wins.innerHTML = user.no_wins;
-    user_elements.score.innerHTML = user.score;
+    user_elements.no_wins.innerText = user.no_wins;
+    user_elements.score.innerText = user.score;
 
     document.getElementById('submit').addEventListener('click', async (e) => {
         e.preventDefault();
@@ -37,11 +37,11 @@ import * as http from '/helpers/http.js';
         }
         const response = await http.post('/update_user', what_to_update);
         if (response.status === 400) {
-            user_elements.error.innerHTML = await response.text();
+            user_elements.error.innerText = await response.text();
             return;
         }
         if (response.status >= 400) {
-            user_elements.error.innerHTML = 'Internal server error';
+            user_elements.error.innerText = 'Internal server error';
             return;
         }
         auth.update_auth(what_to_update);
