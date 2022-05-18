@@ -13,7 +13,25 @@ const sequelize_date = (date) => {
 
 const validate_data_types = (what_to_validate, data_types) => {
     for (const field in data_types) {
-        if (typeof what_to_validate[field] !== data_types[field]) {
+        let validator;
+        const data_type = data_types[field];
+        switch (data_type) {
+            case 'date':
+                validator = (x) => {
+                    return is_valid_date(x);
+                };
+                break;
+            case 'array':
+                validator = (x) => {
+                    return Array.isArray(x);
+                };
+                break;
+            default:
+                validator = (x) => {
+                    return typeof x === data_type;
+                };
+        }
+        if (!validator(what_to_validate[field])) {
             throw new BadRequestException(`${field} must be provided as ${data_types[field]}`);
         }
     }
@@ -190,8 +208,8 @@ router.post('/create_contest', async (req, res, next) => {
         validate_data_types(req.body, {
             name: 'string',
             description: 'string',
-            start_date: 'string',
-            end_date: 'string'
+            start_date: 'date',
+            end_date: 'date'
         });
 
         const { name, description, start_date, end_date } = req.body;
@@ -199,16 +217,9 @@ router.post('/create_contest', async (req, res, next) => {
         if (name === '') {
             throw new BadRequestException('The contest name can not be empty');
         }
-        if (!is_valid_date(start_date)) {
-            throw new BadRequestException('Invalid start date');
-        }
-        if (!is_valid_date(end_date)) {
-            throw new BadRequestException('Invalid end date');
-        }
 
         const start_date_formatted = new Date(start_date);
         const end_date_formatted = new Date(end_date);
-        const current_date = Date();
 
         if (start_date_formatted >= end_date_formatted) {
             throw new BadRequestException('The start date must be before the end date');
@@ -216,10 +227,11 @@ router.post('/create_contest', async (req, res, next) => {
 
         const start_date_sql = sequelize_date(start_date_formatted);
         const end_date_sql = sequelize_date(end_date_formatted);
+        const contests_query_values = [name, description, start_date_sql, end_date_sql];
 
         await db.query(
             'insert into contests (name, description, start_date, end_date) values (?, ?, ?, ?)',
-            [name, description, start_date_sql, end_date_sql]
+            contests_query_values
         );
         return res.status(200).send();
     } catch (e) {
