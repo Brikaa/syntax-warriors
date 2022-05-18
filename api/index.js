@@ -20,6 +20,7 @@ const corsOptions = {
     origin: config.front_url,
     optionsSuccessStatus: 200
 };
+app.locals.db = db;
 
 // Using middleware
 app.use(body_parser.json());

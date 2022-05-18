@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-const db = require('../db_adapter');
 const BadRequestException = require('../bad_request_exception');
 
 const validate_data_types = (what_to_validate, data_types) => {
@@ -30,7 +29,7 @@ const validate_user_info = (user_info) => {
     }
 };
 
-const check_same_user = async (username, email) => {
+const check_same_user = async (db, username, email) => {
     if (username === undefined && email === undefined) {
         throw new Error('Checking for similar users requires at least a username or an email');
     }
@@ -55,7 +54,7 @@ const check_same_user = async (username, email) => {
     }
 };
 
-const get_user = async (user_info) => {
+const get_user = async (db, user_info) => {
     const { username, password } = user_info;
 
     if (username === null || password === null) {
@@ -77,7 +76,7 @@ const get_user = async (user_info) => {
 
 router.post('/get_user', async (req, res, next) => {
     try {
-        return res.status(200).json({ user: await get_user(req.body) });
+        return res.status(200).json({ user: await get_user(req.app.locals.db, req.body) });
     } catch (e) {
         next(e);
     }
@@ -85,8 +84,9 @@ router.post('/get_user', async (req, res, next) => {
 
 router.post('/signup', async (req, res, next) => {
     try {
+        const db = req.app.locals.db;
         validate_user_info(req.body);
-        await check_same_user(req.body.username, req.body.email);
+        await check_same_user(db, req.body.username, req.body.email);
         const { username, email, password } = req.body;
         await db.query('insert into users (email, username, password) values (?, ?, ?)', [
             email,
@@ -101,7 +101,8 @@ router.post('/signup', async (req, res, next) => {
 
 router.post('/update_user', async (req, res, next) => {
     try {
-        const user = await get_user(req.body);
+        const db = req.app.locals.db;
+        const user = await get_user(db, req.body);
         if (user === null) {
             return res.status(403).send();
         }
@@ -134,6 +135,7 @@ router.post('/update_user', async (req, res, next) => {
         });
         if (contains_username || contains_email) {
             await check_same_user(
+                db,
                 contains_username ? new_username : undefined,
                 contains_email ? new_email : undefined
             );
