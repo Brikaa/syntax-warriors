@@ -1,4 +1,5 @@
 import * as auth from '/helpers/auth.js';
+import * as http from '/helpers/http.js';
 
 (async () => {
     const user = await auth.get_user();
@@ -34,13 +35,13 @@ import * as auth from '/helpers/auth.js';
         if (new_password === '') {
             delete what_to_update.new_password;
         }
-        const response = await auth.update_user(what_to_update);
+        const response = await http.post('/update_user', what_to_update);
         if (response.status === 400) {
             user_elements.error.innerHTML = await response.text();
             return;
         }
         if (response.status >= 400) {
-            user_elements.error.innerHTML = 'Internal server error'
+            user_elements.error.innerHTML = 'Internal server error';
             return;
         }
         auth.update_auth(what_to_update);

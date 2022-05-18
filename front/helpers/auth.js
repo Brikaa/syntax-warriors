@@ -18,22 +18,15 @@ const get_username_and_password = () => {
 };
 
 export const is_authorized = async () => {
-    const user_req = await http.post('/get_user', get_username_and_password());
+    const user_req = await http.post('/get_user');
     const user_json = await user_req.json();
     return user_json.user !== null;
 };
 
 export const get_user = async () => {
-    const user_req = await http.post('/get_user', get_username_and_password());
+    const user_req = await http.post('/get_user');
     const user_json = await user_req.json();
     return user_json.user;
-};
-
-export const update_user = async (new_user_info) => {
-    return await http.post('/update_user', {
-        ...get_username_and_password(),
-        ...new_user_info
-    });
 };
 
 export const update_auth = async (updated_auth) => {
