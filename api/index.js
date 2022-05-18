@@ -1,14 +1,10 @@
 // Framework related
 const express = require('express');
-const cors = require('cors');
 const body_parser = require('body-parser');
 
 // Configuration and adapters
 const db = require('./db_adapter');
 const config = require('./config');
-
-// Middleware
-const users_middleware = require('./middleware/users');
 
 // Exceptions
 const BadRequestException = require('./bad_request_exception');
@@ -22,10 +18,10 @@ const corsOptions = {
 };
 app.locals.db = db;
 
-// Using middleware
+// Using external middleware
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
-app.use(cors(corsOptions));
+app.use(require('cors')(corsOptions));
 
 app.use((req, res, next) => {
     if (
@@ -39,7 +35,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(users_middleware);
+// Using internal middleware
+app.use(require('./middleware'));
 
 app.use((err, req, res, next) => {
     if (err instanceof BadRequestException) {

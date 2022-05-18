@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const BadRequestException = require('../bad_request_exception');
+const BadRequestException = require('./bad_request_exception');
 
 const validate_data_types = (what_to_validate, data_types) => {
     for (const field in data_types) {
@@ -11,7 +11,6 @@ const validate_data_types = (what_to_validate, data_types) => {
     }
 };
 
-// User actions
 const validate_user_info = (user_info) => {
     const { username, email, password } = user_info;
     validate_data_types(user_info, { username: 'string', email: 'string', password: 'string' });
