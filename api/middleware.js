@@ -101,8 +101,37 @@ const get_user = async (db, user_info) => {
 
 const is_user_admin = async (db, user_info) => {
     const user = await get_user(db, user_info);
-    return !!user.is_staff;
+    return user && !!user.is_staff;
 };
+
+const is_user_logged_in = async (db, user_info) => {
+    const user = await get_user(db, user_info);
+    return !!user;
+}
+
+router.use('/admin', async (req, res, next) => {
+    try {
+        const is_staff = await is_user_admin(req.app.locals.db, req.body);
+        if (!is_staff) {
+            return res.status(403).send();
+        }
+        next();
+    } catch (e) {
+        next(e);
+    }
+});
+
+router.use(/^\/update_user$/, async (req, res, next) => {
+    try {
+        const is_logged_in = await is_user_logged_in(req.app.locals.db, req.body);
+        if (!is_logged_in) {
+            return res.status(403).send();
+        }
+        next();
+    } catch (e) {
+        next(e);
+    }
+});
 
 router.post('/get_user', async (req, res, next) => {
     try {
@@ -196,14 +225,9 @@ router.post('/update_user', async (req, res, next) => {
     }
 });
 
-router.post('/create_contest', async (req, res, next) => {
+router.post('/admin/create_contest', async (req, res, next) => {
     try {
         const db = req.app.locals.db;
-
-        const is_staff = await is_user_admin(db, req.body);
-        if (!is_staff) {
-            return res.status(403).send();
-        }
 
         validate_data_types(req.body, {
             name: 'string',
