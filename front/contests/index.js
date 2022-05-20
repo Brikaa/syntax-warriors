@@ -29,9 +29,31 @@ import * as http from '/helpers/http.js';
     }
     const languages_select = document.getElementById('submission_language');
     const languages = await languages_req.json();
+    const languages_arr = [];
     languages.forEach((language) => {
         const language_option = document.createElement('option');
         language_option.innerText = language.language;
         languages_select.appendChild(language_option);
+        languages_arr.push(language.language);
+    });
+
+    const submission_area = document.getElementById('submission');
+    document.getElementById('submit').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const submission_response = await http.post(`/contests/submit/${contest_id}`, {
+            submission: submission_area.value,
+            language: languages_arr[languages_select.selectedIndex]
+        });
+        if (submission_response.status >= 400) {
+            return alert('An error has occurred');
+        }
+        const submission_result_json = await submission_response.json();
+        const passed = submission_result_json.passed;
+        if (passed) {
+            alert('Congratulations! You solved the contest.');
+            location.reload();
+        } else {
+            alert('Invalid solution');
+        }
     });
 })();
