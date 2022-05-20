@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 // Using internal middleware
 app.use(require('./middleware/users'));
 app.use(require('./middleware/admins'));
+app.use(require('./middleware/contests'));
 
 app.use((err, req, res, next) => {
     if (err instanceof BadRequestException) {
