@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('../config');
 const router = express.Router();
 
 const BadRequestException = require('../exceptions/bad_request_exception');
@@ -28,7 +29,7 @@ router.post('/contests/get_all', async (req, res, next) => {
     }
 });
 
-router.post('/contests/:id', async (req, res, next) => {
+router.post('/contests/view/:id', async (req, res, next) => {
     try {
         if (!req.params.hasOwnProperty('id')) {
             throw BadRequestException('The contest ID must be provided as a request parameter');
@@ -41,6 +42,19 @@ router.post('/contests/:id', async (req, res, next) => {
             return res.status(200).json({ contest: null });
         }
         return res.status(200).json({ contest: contests[0] });
+    } catch (e) {
+        next(e);
+    }
+});
+
+router.post('/contests/get_languages', async (req, res, next) => {
+    try {
+        const languages_res = await fetch(config.piston_url + '/runtimes');
+        if (languages_res.status >= 400) {
+            return res.status(500).send();
+        }
+        const languages = await languages_res.json();
+        return res.status(200).json(languages);
     } catch (e) {
         next(e);
     }
