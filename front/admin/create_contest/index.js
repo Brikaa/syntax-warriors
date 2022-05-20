@@ -51,13 +51,17 @@ import * as http from '/helpers/http.js';
             output: output_area
         });
     });
+
     document.getElementById('submit').addEventListener('click', async (e) => {
         e.preventDefault();
-        const response = await http.post('/create_contest', {
+        const response = await http.post('/admin/create_contest', {
             name: contests_elements.name.value,
             description: contests_elements.description.value,
             start_date: contests_elements.start_date.value,
-            end_date: contests_elements.end_date.value
+            end_date: contests_elements.end_date.value,
+            test_cases: test_cases_elements.map((e) => {
+                return { input: e.input.value, output: e.output.value };
+            })
         });
         if (response.status === 400) {
             contests_elements.error.innerText = await response.text();

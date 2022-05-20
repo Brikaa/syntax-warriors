@@ -7,10 +7,6 @@ const is_valid_date = (date) => {
     return new Date(date) != 'Invalid Date';
 };
 
-const sequelize_date = (date) => {
-    return date.toISOString().slice(0, 19).replace('T', ' ');
-};
-
 const validate_data_types = (what_to_validate, data_types) => {
     for (const field in data_types) {
         let validator;
@@ -107,7 +103,7 @@ const is_user_admin = async (db, user_info) => {
 const is_user_logged_in = async (db, user_info) => {
     const user = await get_user(db, user_info);
     return !!user;
-}
+};
 
 router.use('/admin', async (req, res, next) => {
     try {
@@ -233,30 +229,52 @@ router.post('/admin/create_contest', async (req, res, next) => {
             name: 'string',
             description: 'string',
             start_date: 'date',
-            end_date: 'date'
+            end_date: 'date',
+            test_cases: 'array'
         });
 
-        const { name, description, start_date, end_date } = req.body;
+        const { name, description, start_date, end_date, test_cases } = req.body;
 
         if (name === '') {
             throw new BadRequestException('The contest name can not be empty');
         }
 
-        const start_date_formatted = new Date(start_date);
-        const end_date_formatted = new Date(end_date);
+        const start_date_with_dt = new Date(start_date);
+        const end_date_with_dt = new Date(end_date);
 
-        if (start_date_formatted >= end_date_formatted) {
+        if (start_date_with_dt >= end_date_with_dt) {
             throw new BadRequestException('The start date must be before the end date');
         }
 
-        const start_date_sql = sequelize_date(start_date_formatted);
-        const end_date_sql = sequelize_date(end_date_formatted);
-        const contests_query_values = [name, description, start_date_sql, end_date_sql];
+        const contests_query_values = [name, description, start_date_with_dt, end_date_with_dt];
 
-        await db.query(
+        const filtered_test_cases = test_cases.filter(
+            (t) => ![undefined, ''].includes(t.input) || ![undefined, ''].includes(t.output)
+        );
+
+        if (filtered_test_cases.length < 1) {
+            throw new BadRequestException('At least one valid test case must be provided');
+        }
+
+        const contest_packet = await db.query(
             'insert into contests (name, description, start_date, end_date) values (?, ?, ?, ?)',
             contests_query_values
         );
+
+        const test_cases_2d = filtered_test_cases.map((i) => [
+            i.input,
+            i.output,
+            contest_packet.insertId
+        ]);
+        const test_cases_query_values = filtered_test_cases.map((i, index) => `(${index}, ?)`);
+        console.log(test_cases_2d);
+        await db.query(
+            `insert into test_cases (id, input, output, contest_id) values ${test_cases_query_values.join(
+                ', '
+            )}`,
+            test_cases_2d
+        );
+
         return res.status(200).send();
     } catch (e) {
         next(e);
