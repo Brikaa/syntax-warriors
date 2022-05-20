@@ -17,7 +17,8 @@ router.use('/contests', async (req, res, next) => {
 router.use('/contests/get_all', async (req, res, next) => {
     try {
         const contests = await req.app.locals.db.query(
-            'select id, name, start_date, end_date from contests order by end_date'
+            'select id, name, end_date from contests where start_date < ?',
+            [new Date()]
         );
         return res.status(200).json(contests);
     } catch (e) {
