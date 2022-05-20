@@ -7,7 +7,7 @@ const db = require('./db_adapter');
 const config = require('./config');
 
 // Exceptions
-const BadRequestException = require('./bad_request_exception');
+const BadRequestException = require('./exceptions/bad_request_exception');
 
 // Constants
 const app = express();
