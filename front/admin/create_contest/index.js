@@ -2,8 +2,8 @@ import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
-    const is_authorized = await auth.is_authorized();
-    if (!is_authorized) {
+    const is_staff = await auth.is_staff();
+    if (!is_staff) {
         location.replace('/');
     }
     const contests_elements = {

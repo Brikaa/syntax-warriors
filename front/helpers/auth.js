@@ -17,16 +17,20 @@ const get_username_and_password = () => {
     };
 };
 
-export const is_authorized = async () => {
-    const user_req = await http.post('/get_user');
-    const user_json = await user_req.json();
-    return user_json.user !== null;
-};
-
 export const get_user = async () => {
     const user_req = await http.post('/get_user');
     const user_json = await user_req.json();
     return user_json.user;
+};
+
+export const is_authorized = async () => {
+    const user = await get_user();
+    return !!user;
+};
+
+export const is_staff = async () => {
+    const user = await get_user();
+    return !!user && !!user.is_staff;
 };
 
 export const update_auth = async (updated_auth) => {
@@ -38,4 +42,4 @@ export const update_auth = async (updated_auth) => {
         new_auth.password = updated_auth.new_password;
     }
     authorize(new_auth.username, new_auth.password);
-}
+};
