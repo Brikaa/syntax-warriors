@@ -1,6 +1,12 @@
+import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
+    const is_authorized = await auth.is_authorized();
+    if (!is_authorized) {
+        return location.replace('/');
+    }
+
     const url_params = new URLSearchParams(window.location.search);
     if (!url_params.has('id')) {
         return location.replace('/');
@@ -41,7 +47,7 @@ import * as http from '/helpers/http.js';
     const submissions_area = document.getElementById('submissions_area');
     submissions.forEach(s => {
         const submission_span = document.createElement('span');
-        submission_span.innerText = `${s.language} - ${(new Date(s.date)).toUTCString()}`
+        submission_span.innerText = `${s.username} - ${s.language} - ${(new Date(s.date)).toUTCString()}`
         submissions_area.appendChild(submission_span);
         submissions_area.appendChild(document.createElement('br'));
     });
