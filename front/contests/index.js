@@ -44,6 +44,10 @@ import * as http from '/helpers/http.js';
             submission: submission_area.value,
             language: languages_arr[languages_select.selectedIndex]
         });
+        if (submission_response.status === 400) {
+            const error = await submission_response.text();
+            return alert(error);
+        }
         if (submission_response.status >= 400) {
             return alert('An error has occurred');
         }

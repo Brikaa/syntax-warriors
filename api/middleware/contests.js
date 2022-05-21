@@ -33,7 +33,7 @@ router.post('/contests/get_all', async (req, res, next) => {
 router.post('/contests/view/:id', async (req, res, next) => {
     try {
         if (!req.params.hasOwnProperty('id')) {
-            throw BadRequestException('The contest ID must be provided as a request parameter');
+            throw new BadRequestException('The contest ID must be provided as a request parameter');
         }
         const contests = await req.app.locals.db.query(
             'select id, name, description, start_date, end_date from contests where id = ? and start_date < ?',
@@ -65,7 +65,7 @@ router.post('/contests/submit/:id', async (req, res, next) => {
     try {
         const db = req.app.locals.db;
         if (!req.params.hasOwnProperty('id')) {
-            throw BadRequestException('The contest id must be included as a request parameter');
+            throw new BadRequestException('The contest id must be included as a request parameter');
         }
         data_types_helper.validate_data_types(req.body, {
             submission: 'string',
@@ -77,10 +77,23 @@ router.post('/contests/submit/:id', async (req, res, next) => {
             [req.params.id, current_date, current_date]
         );
         if (contests.length < 1) {
-            throw BadRequestException('Could not find a contest with the specified id');
+            throw new BadRequestException('Could not find an active contest with the specified id');
         }
 
         const contest = contests[0];
+        const user = await users_helper.get_user(db, req.body);
+        if (user === null) {
+            return res.status(500).send();
+        }
+
+        const submissions = await db.query(
+            'select user_id from contest_submissions where user_id = ? and contest_id = ?',
+            [user.id, contest.id]
+        );
+        if (submissions.length > 0) {
+            throw new BadRequestException('You already have a submission in this contest');
+        }
+
         const test_cases = await db.query(
             'select input, output from test_cases where contest_id = ?',
             [contest.id]
@@ -108,10 +121,14 @@ router.post('/contests/submit/:id', async (req, res, next) => {
                 return res.status(200).json({ passed: false });
             }
             if (execution_result.run.stdout.trim() !== test_case.output) {
-                console.log(test_case.output);
                 return res.status(200).json({ passed: false });
             }
         }
+
+        await db.query(
+            'insert into contest_submissions (user_id, contest_id, language) values (?, ?, ?)',
+            [user.id, contest.id, req.body.language]
+        );
 
         return res.status(200).json({ passed: true });
     } catch (e) {
