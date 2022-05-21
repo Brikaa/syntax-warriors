@@ -35,14 +35,22 @@ router.post('/contests/view/:id', async (req, res, next) => {
         if (!req.params.hasOwnProperty('id')) {
             throw new BadRequestException('The contest ID must be provided as a request parameter');
         }
-        const contests = await req.app.locals.db.query(
+        const db = req.app.locals.db;
+        const contests = await db.query(
             'select id, name, description, start_date, end_date from contests where id = ? and start_date < ?',
             [req.params.id, new Date()]
         );
         if (contests.length < 1) {
             return res.status(200).json({ contest: null });
         }
-        return res.status(200).json({ contest: contests[0] });
+        const contest = contests[0];
+
+        const submissions = await db.query(
+            'select user_id, language, date from contest_submissions where contest_id = ?',
+            [contest.id]
+        );
+
+        return res.status(200).json({ contest, submissions });
     } catch (e) {
         next(e);
     }
@@ -126,8 +134,8 @@ router.post('/contests/submit/:id', async (req, res, next) => {
         }
 
         await db.query(
-            'insert into contest_submissions (user_id, contest_id, language) values (?, ?, ?)',
-            [user.id, contest.id, req.body.language]
+            'insert into contest_submissions (user_id, contest_id, language, submission, date) values (?, ?, ?, ?, ?)',
+            [user.id, contest.id, req.body.language, req.body.submission, current_date]
         );
 
         return res.status(200).json({ passed: true });

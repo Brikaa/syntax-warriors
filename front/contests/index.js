@@ -37,6 +37,15 @@ import * as http from '/helpers/http.js';
         languages_arr.push(language.language);
     });
 
+    const submissions = contest_json.submissions;
+    const submissions_area = document.getElementById('submissions_area');
+    submissions.forEach(s => {
+        const submission_span = document.createElement('span');
+        submission_span.innerText = `${s.language} - ${(new Date(s.date)).toUTCString()}`
+        submissions_area.appendChild(submission_span);
+        submissions_area.appendChild(document.createElement('br'));
+    });
+
     const submission_area = document.getElementById('submission');
     document.getElementById('submit').addEventListener('click', async (e) => {
         e.preventDefault();
