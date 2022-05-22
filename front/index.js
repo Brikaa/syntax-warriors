@@ -27,7 +27,7 @@ import * as auth from '/helpers/auth.js';
     const current_date = new Date();
     contests.forEach((contest) => {
         const contest_link = document.createElement('a');
-        contest_link.setAttribute('href', `/contests?id=${contest.id}`);
+        contest_link.setAttribute('href', `/contest?id=${contest.id}`);
         contest_link.innerText = contest.name;
         const target_area =
             new Date(contest.end_date) < current_date
