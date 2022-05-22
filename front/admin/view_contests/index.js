@@ -6,7 +6,7 @@ import * as auth from '/helpers/auth.js';
     if (!is_staff) {
         location.replace('/');
     }
-    const contests_res = await http.post('/admin/view_contests');
+    const contests_res = await http.post('/admin/get_contests');
     if (contests_res.status >= 400) {
         return alert('An error has occurred');
     }

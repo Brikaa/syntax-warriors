@@ -30,7 +30,7 @@ router.post('/get_all', async (req, res, next) => {
     }
 });
 
-router.post('/view/:id', async (req, res, next) => {
+router.post('/get/:id', async (req, res, next) => {
     try {
         if (!req.params.hasOwnProperty('id')) {
             throw new BadRequestException('The contest ID must be provided as a request parameter');

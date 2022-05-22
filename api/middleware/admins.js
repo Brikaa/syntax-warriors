@@ -76,13 +76,43 @@ router.post('/create_contest', async (req, res, next) => {
     }
 });
 
-router.post('/view_contests', async (req, res, next) => {
+router.post('/get_contests', async (req, res, next) => {
     try {
         const contests = await req.app.locals.db.query('select id, name from contests');
         return res.status(200).json(contests);
     } catch (e) {
         next(e);
     }
-})
+});
+
+router.post('/get_contest/:id', async (req, res, next) => {
+    try {
+        if (!req.params.hasOwnProperty('id')) {
+            throw BadRequestException('A contest id must be provided in the request parameters');
+        }
+        const db = req.app.locals.db;
+        const contests = await db.query(
+            'select id, name, description, start_date, end_date from contests where id = ?',
+            [req.params.id]
+        );
+        if (contests.length < 1) {
+            return res.status(200).send({
+                contest: null,
+                test_cases: null
+            });
+        }
+        const contest = contests[0];
+        const test_cases = await db.query(
+            'select input, output from test_cases where contest_id = ?',
+            [contest.id]
+        );
+        return res.status(200).send({
+            contest,
+            test_cases
+        });
+    } catch (e) {
+        next(e);
+    }
+});
 
 module.exports = router;

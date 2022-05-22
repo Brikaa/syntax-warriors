@@ -7,12 +7,12 @@ import * as http from '/helpers/http.js';
         return location.replace('/');
     }
 
-    const url_params = new URLSearchParams(window.location.search);
+    const url_params = new URLSearchParams(location.search);
     if (!url_params.has('id')) {
         return location.replace('/');
     }
     const contest_id = url_params.get('id');
-    const contest_res = await http.post(`/contests/view/${contest_id}`);
+    const contest_res = await http.post(`/contests/get/${contest_id}`);
     if (contest_res.status >= 400) {
         return location.replace('/');
     }
