@@ -28,12 +28,32 @@ import * as http from '/helpers/http.js';
     ).toUTCString()}`;
     document.getElementById('contest_description').innerText = contest.description;
 
+    const submissions = contest_json.submissions;
+    const submissions_area = document.getElementById('submissions_area');
+    submissions.forEach((s) => {
+        const submission_span = document.createElement('span');
+        submission_span.innerText = `${s.username} - ${s.language} - ${new Date(
+            s.date
+        ).toUTCString()}`;
+        submissions_area.appendChild(submission_span);
+        submissions_area.appendChild(document.createElement('br'));
+    });
+
+    const languages_select = document.getElementById('submission_language');
+    const submission_area = document.getElementById('submission');
+    const submission_button = document.getElementById('submit');
+    if ((new Date(contest.end_date)) < (new Date())) {
+        submission_area.setAttribute('hidden', '');
+        languages_select.setAttribute('hidden', '');
+        submission_button.setAttribute('hidden', '');
+        return;
+    }
+
     const languages_req = await http.post('/contests/get_languages');
     if (languages_req.status >= 400) {
         alert('An error has occurred while loading the languages, please try again later');
         return location.replace('/');
     }
-    const languages_select = document.getElementById('submission_language');
     const languages = await languages_req.json();
     const languages_arr = [];
     languages.forEach((language) => {
@@ -43,17 +63,7 @@ import * as http from '/helpers/http.js';
         languages_arr.push(language.language);
     });
 
-    const submissions = contest_json.submissions;
-    const submissions_area = document.getElementById('submissions_area');
-    submissions.forEach(s => {
-        const submission_span = document.createElement('span');
-        submission_span.innerText = `${s.username} - ${s.language} - ${(new Date(s.date)).toUTCString()}`
-        submissions_area.appendChild(submission_span);
-        submissions_area.appendChild(document.createElement('br'));
-    });
-
-    const submission_area = document.getElementById('submission');
-    document.getElementById('submit').addEventListener('click', async (e) => {
+    submission_button.addEventListener('click', async (e) => {
         e.preventDefault();
         const submission_response = await http.post(`/contests/submit/${contest_id}`, {
             submission: submission_area.value,
