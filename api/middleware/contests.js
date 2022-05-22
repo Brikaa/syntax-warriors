@@ -6,7 +6,7 @@ const BadRequestException = require('../exceptions/bad_request_exception');
 const data_types_helper = require('../helpers/data_types');
 const users_helper = require('../helpers/users');
 
-router.use('/contests', async (req, res, next) => {
+router.use(async (req, res, next) => {
     try {
         const is_logged_in = users_helper.is_user_logged_in(req.app.locals.db, req.body);
         if (!is_logged_in) {
@@ -18,7 +18,7 @@ router.use('/contests', async (req, res, next) => {
     }
 });
 
-router.post('/contests/get_all', async (req, res, next) => {
+router.post('/get_all', async (req, res, next) => {
     try {
         const contests = await req.app.locals.db.query(
             'select id, name, end_date from contests where start_date < ?',
@@ -30,7 +30,7 @@ router.post('/contests/get_all', async (req, res, next) => {
     }
 });
 
-router.post('/contests/view/:id', async (req, res, next) => {
+router.post('/view/:id', async (req, res, next) => {
     try {
         if (!req.params.hasOwnProperty('id')) {
             throw new BadRequestException('The contest ID must be provided as a request parameter');
@@ -58,7 +58,7 @@ router.post('/contests/view/:id', async (req, res, next) => {
     }
 });
 
-router.post('/contests/get_languages', async (req, res, next) => {
+router.post('/get_languages', async (req, res, next) => {
     try {
         const languages_res = await fetch(config.piston_url + '/runtimes');
         if (languages_res.status >= 400) {
@@ -71,7 +71,7 @@ router.post('/contests/get_languages', async (req, res, next) => {
     }
 });
 
-router.post('/contests/submit/:id', async (req, res, next) => {
+router.post('/submit/:id', async (req, res, next) => {
     try {
         const db = req.app.locals.db;
         if (!req.params.hasOwnProperty('id')) {
