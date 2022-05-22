@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 // Using internal middleware
 app.use(require('./middleware/users'));
-app.use(require('./middleware/admins'));
+app.use('/admin', require('./middleware/admins'));
 app.use('/contests', require('./middleware/contests'));
 
 app.use((err, req, res, next) => {

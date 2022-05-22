@@ -5,7 +5,7 @@ const users_helper = require('../helpers/users');
 const data_types_helper = require('../helpers/data_types');
 const BadRequestException = require('../exceptions/bad_request_exception');
 
-router.use('/admin', async (req, res, next) => {
+router.use(async (req, res, next) => {
     try {
         const is_staff = await users_helper.is_user_admin(req.app.locals.db, req.body);
         if (!is_staff) {
@@ -17,7 +17,7 @@ router.use('/admin', async (req, res, next) => {
     }
 });
 
-router.post('/admin/create_contest', async (req, res, next) => {
+router.post('/create_contest', async (req, res, next) => {
     try {
         const db = req.app.locals.db;
 
