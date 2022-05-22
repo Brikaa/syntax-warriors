@@ -15,23 +15,30 @@ import * as auth from '/helpers/auth.js';
         document.getElementById('admin').removeAttribute('hidden');
     }
 
-    const contests_area = document.getElementById('contests');
+    const active_contests_area = document.getElementById('active_contests');
+    const past_contests_area = document.getElementById('past_contests');
 
     const contests_res = await http.post('/contests/get_all');
     if (contests_res.status >= 400) {
-        contests_area.innerText = 'An error has occurred';
+        active_contests_area.innerText = 'An error has occurred';
     }
+
     const contests = await contests_res.json();
+    const current_date = new Date();
     contests.forEach((contest) => {
         const contest_link = document.createElement('a');
         contest_link.setAttribute('href', `/contests?id=${contest.id}`);
         contest_link.innerText = contest.name;
-        contests_area.appendChild(contest_link);
-        contests_area.appendChild(document.createElement('br'));
+        const target_area =
+            new Date(contest.end_date) < current_date
+                ? past_contests_area
+                : active_contests_area;
+        target_area.appendChild(contest_link);
+        target_area.appendChild(document.createElement('br'));
         const end_date = document.createElement('a');
-        end_date.innerText = `Ends on ${(new Date(contest.end_date)).toUTCString()}`;
-        contests_area.appendChild(end_date);
-        contests_area.appendChild(document.createElement('br'));
-        contests_area.appendChild(document.createElement('br'));
+        end_date.innerText = `Ends on ${new Date(contest.end_date).toUTCString()}`;
+        target_area.appendChild(end_date);
+        target_area.appendChild(document.createElement('br'));
+        target_area.appendChild(document.createElement('br'));
     });
 })();
