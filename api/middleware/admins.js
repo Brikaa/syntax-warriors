@@ -76,4 +76,13 @@ router.post('/create_contest', async (req, res, next) => {
     }
 });
 
+router.post('/view_contests', async (req, res, next) => {
+    try {
+        const contests = await req.app.locals.db.query('select id, name from contests');
+        return res.status(200).json(contests);
+    } catch (e) {
+        next(e);
+    }
+})
+
 module.exports = router;
