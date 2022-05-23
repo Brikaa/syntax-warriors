@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const users_helper = require('../helpers/users');
+const data_types_helper = require('../helpers/data_types');
 const BadRequestException = require('../exceptions/bad_request_exception');
 const contests_helper = require('../helpers/contests');
 
@@ -100,6 +101,21 @@ router.post('/delete_contest/:id', async (req, res, next) => {
         ]);
         if (packet.affectedRows < 1) {
             throw new BadRequestException('Could not find a contest with the specified id');
+        }
+        return res.status(200).send();
+    } catch (e) {
+        next(e);
+    }
+});
+
+router.post('/delete_submission/:contest_id/:user_id', async (req, res, next) => {
+    try {
+        const packet = await req.app.locals.db.query(
+            'delete from contest_submissions where contest_id = ? and user_id = ?',
+            [req.params.contest_id, req.params.user_id]
+        );
+        if (packet.affectedRows < 1) {
+            throw new BadRequestException('Could not find a submission with the specified data');
         }
         return res.status(200).send();
     } catch (e) {

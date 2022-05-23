@@ -43,7 +43,7 @@ router.post('/get/:id', async (req, res, next) => {
         const contest = contests[0];
 
         const submissions = await db.query(
-            'select users.username, language, date\
+            'select user_id, users.username, language, date\
             from contest_submissions, users where contest_id = ? and users.id = user_id\
             order by date asc',
             [contest.id]

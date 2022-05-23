@@ -2,8 +2,8 @@ import * as auth from '/helpers/auth.js';
 import * as http from '/helpers/http.js';
 
 (async () => {
-    const is_authorized = await auth.is_authorized();
-    if (!is_authorized) {
+    const user = await auth.get_user();
+    if (user === null) {
         return location.replace('/');
     }
 
@@ -36,13 +36,27 @@ import * as http from '/helpers/http.js';
             s.date
         ).toUTCString()}`;
         submissions_area.appendChild(submission_span);
+        if (user.is_staff) {
+            submission_span.innerText += ' - ';
+            const delete_link = document.createElement('a');
+            delete_link.innerText = 'delete';
+            delete_link.setAttribute('href', `#`);
+            delete_link.addEventListener('click', async () => {
+                if (!confirm('Are you sure you want to delete this submission?')) {
+                    return;
+                }
+                await http.post(`/admin/delete_submission/${contest.id}/${s.user_id}`);
+                location.reload();
+            });
+            submission_span.appendChild(delete_link);
+        }
         submissions_area.appendChild(document.createElement('br'));
     });
 
     const languages_select = document.getElementById('submission_language');
     const submission_area = document.getElementById('submission');
     const submission_button = document.getElementById('submit');
-    if ((new Date(contest.end_date)) < (new Date())) {
+    if (new Date(contest.end_date) < new Date()) {
         submission_area.setAttribute('hidden', '');
         languages_select.setAttribute('hidden', '');
         submission_button.setAttribute('hidden', '');
@@ -65,10 +79,12 @@ import * as http from '/helpers/http.js';
 
     submission_button.addEventListener('click', async (e) => {
         e.preventDefault();
+        submission_button.setAttribute('disabled', 'true');
         const submission_response = await http.post(`/contests/submit/${contest_id}`, {
             submission: submission_area.value,
             language: languages_arr[languages_select.selectedIndex]
         });
+        submission_button.removeAttribute('disabled');
         if (submission_response.status === 400) {
             const error = await submission_response.text();
             return alert(error);
