@@ -30,14 +30,16 @@ import * as auth from '/helpers/auth.js';
         contest_link.setAttribute('href', `/contest?id=${contest.id}`);
         contest_link.innerText = contest.name;
         const target_area =
-            new Date(contest.end_date) < current_date
-                ? past_contests_area
-                : active_contests_area;
+            new Date(contest.end_date) < current_date ? past_contests_area : active_contests_area;
         target_area.appendChild(contest_link);
         target_area.appendChild(document.createElement('br'));
         const end_date = document.createElement('a');
         end_date.innerText = `Ends on ${new Date(contest.end_date).toUTCString()}`;
+        const total_participation = document.createElement('a');
+        total_participation.innerText = `Total participation: ${contest.total_participation}`;
         target_area.appendChild(end_date);
+        target_area.appendChild(document.createElement('br'));
+        target_area.appendChild(total_participation);
         target_area.appendChild(document.createElement('br'));
         target_area.appendChild(document.createElement('br'));
     });

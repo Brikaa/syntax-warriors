@@ -21,7 +21,11 @@ router.use(async (req, res, next) => {
 router.post('/get_all', async (req, res, next) => {
     try {
         const contests = await req.app.locals.db.query(
-            'select id, name, end_date from contests where start_date < ?',
+            'select id, name, end_date, count(contest_submissions.user_id) as total_participation\
+            from contests\
+            left join contest_submissions on contests.id = contest_submissions.contest_id\
+            where start_date < ?\
+            group by contests.id order by count(contest_submissions.user_id) desc',
             [new Date()]
         );
         return res.status(200).json(contests);
