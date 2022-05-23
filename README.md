@@ -25,7 +25,7 @@ on the API endpoints are POST requests.
 6. Run `npm run initdb` to initialize the database
 7. Run `npm run migrate` to apply the database migrations
 8. Run `npm run api` and `npm run front`
-9. Access the website at localhost, port 3000
+9. Access the website at `127.0.0.1:3000`, port `3000`
 
 ## Team members
 - Omar Adel Brikaa
