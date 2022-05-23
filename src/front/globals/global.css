@@ -1,3 +1,50 @@
+body {
+    --black: #282c34;
+    --black-opaque: rgba(0, 0, 0, 0.2);
+    --white: white;
+    --white-opaque: rgba(255, 255, 255, 0.7);
+    --orange: orange;
+    background-color: var(--black);
+    color: var(--white);
+}
+
+::selection {
+    background-color: var(--orange);
+    color: var(--white);
+}
+
+textarea,
+input,
+select {
+    background-color: var(--black-opaque);
+    color: var(--white);
+    border: 1px solid black;
+    outline: none;
+}
+
+textarea:focus,
+input:focus,
+a:focus,
+select:focus {
+    outline: 1px solid var(--orange);
+}
+
+a:link:hover {
+    opacity: 80%;
+}
+
+input:disabled {
+    background-color: var(--black);
+    outline: none;
+    border: none;
+    color: var(--white-opaque)
+}
+
+a:link,
+a:visited {
+    color: var(--orange);
+}
+
 .large_text_area {
     width: 70%;
     min-width: 200px;
