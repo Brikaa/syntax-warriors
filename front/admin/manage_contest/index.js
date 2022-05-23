@@ -27,7 +27,8 @@ import * as http from '/helpers/http.js';
         test_cases_area: document.getElementById('test_cases_area'),
         start_date: document.getElementById('start_date'),
         end_date: document.getElementById('end_date'),
-        error: document.getElementById('error')
+        error: document.getElementById('error'),
+        submit: document.getElementById('submit')
     };
 
     const test_cases_elements = [];
@@ -71,7 +72,7 @@ import * as http from '/helpers/http.js';
         add_test_case_element();
     });
 
-    document.getElementById('submit').addEventListener('click', async (e) => {
+    contest_elements.submit.addEventListener('click', async (e) => {
         e.preventDefault();
         const post_url = contest === null ? 'create_contest' : 'update_contest';
         const response = await http.post(`/admin/${post_url}`, {
@@ -104,5 +105,6 @@ import * as http from '/helpers/http.js';
             test_case_element.input.value = test_case.input;
             test_case_element.output.value = test_case.output;
         }
+        contest_elements.submit.value = 'Update contest';
     }
 })();
