@@ -32,9 +32,6 @@ router.post('/get_all', async (req, res, next) => {
 
 router.post('/get/:id', async (req, res, next) => {
     try {
-        if (!req.params.hasOwnProperty('id')) {
-            throw new BadRequestException('The contest ID must be provided as a request parameter');
-        }
         const db = req.app.locals.db;
         const contests = await db.query(
             'select id, name, description, start_date, end_date from contests where id = ? and start_date < ?',
@@ -74,9 +71,6 @@ router.post('/get_languages', async (req, res, next) => {
 router.post('/submit/:id', async (req, res, next) => {
     try {
         const db = req.app.locals.db;
-        if (!req.params.hasOwnProperty('id')) {
-            throw new BadRequestException('The contest id must be included as a request parameter');
-        }
         data_types_helper.validate_data_types(req.body, {
             submission: 'string',
             language: 'string'

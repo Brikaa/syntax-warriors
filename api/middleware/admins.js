@@ -45,9 +45,6 @@ router.post('/get_contests', async (req, res, next) => {
 
 router.post('/get_contest/:id', async (req, res, next) => {
     try {
-        if (!req.params.hasOwnProperty('id')) {
-            throw BadRequestException('A contest id must be provided in the request parameters');
-        }
         const db = req.app.locals.db;
         const contests = await db.query(
             'select id, name, description, start_date, end_date from contests where id = ?',
@@ -75,15 +72,12 @@ router.post('/get_contest/:id', async (req, res, next) => {
 
 router.post('/update_contest/:id', async (req, res, next) => {
     try {
-        if (!req.params.hasOwnProperty('id')) {
-            throw BadRequestException('A contest id must be provided in the request parameters');
-        }
         const { name, description, start_date, end_date, test_cases } =
             contests_helper.validate_and_filter_contest_info(req.body);
         const db = req.app.locals.db;
         const contests = await db.query('select id from contests where id = ?', [req.params.id]);
         if (contests.length < 1) {
-            throw BadRequestException('Could not find a contest with the specified id');
+            throw new BadRequestException('Could not find a contest with the specified id');
         }
         const contest = contests[0];
         await db.query(
@@ -93,6 +87,20 @@ router.post('/update_contest/:id', async (req, res, next) => {
 
         await db.query('delete from test_cases where contest_id = ?', [contest.id]);
         await contests_helper.insert_test_cases(db, contest.id, test_cases);
+        return res.status(200).send();
+    } catch (e) {
+        next(e);
+    }
+});
+
+router.post('/delete_contest/:id', async (req, res, next) => {
+    try {
+        const packet = await req.app.locals.db.query('delete from contests where id = ?', [
+            req.params.id
+        ]);
+        if (packet.affectedRows < 1) {
+            throw new BadRequestException('Could not find a contest with the specified id');
+        }
         return res.status(200).send();
     } catch (e) {
         next(e);
