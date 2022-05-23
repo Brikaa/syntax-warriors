@@ -103,6 +103,7 @@ router.post('/submit/:id', async (req, res, next) => {
             [contest.id]
         );
 
+        const timeout = (ms) => new Promise((res) => setTimeout(res, ms));
         for (const test_case of test_cases) {
             const execution_response = await fetch(config.piston_url + '/execute', {
                 method: 'POST',
@@ -127,6 +128,7 @@ router.post('/submit/:id', async (req, res, next) => {
             if (execution_result.run.stdout.trim() !== test_case.output) {
                 return res.status(200).json({ passed: false });
             }
+            await timeout(200);
         }
 
         await db.query(
