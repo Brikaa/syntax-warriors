@@ -21,11 +21,12 @@ router.use(async (req, res, next) => {
 router.post('/create_contest', async (req, res, next) => {
     try {
         const db = req.app.locals.db;
+        const user = await users_helper.get_user(db, req.body);
         const { name, description, start_date, end_date, test_cases } =
             contests_helper.validate_and_filter_contest_info(req.body);
         const contest_packet = await db.query(
-            'insert into contests (name, description, start_date, end_date) values (?, ?, ?, ?)',
-            [name, description, start_date, end_date]
+            'insert into contests (name, description, start_date, end_date, author_id) values (?, ?, ?, ?, ?)',
+            [name, description, start_date, end_date, user.id]
         );
 
         await contests_helper.insert_test_cases(db, contest_packet.insertId, test_cases);
