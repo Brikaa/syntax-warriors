@@ -74,7 +74,7 @@ import * as http from '/helpers/http.js';
 
     contest_elements.submit.addEventListener('click', async (e) => {
         e.preventDefault();
-        const post_url = contest === null ? 'create_contest' : 'update_contest';
+        const post_url = contest === null ? 'create_contest' : `update_contest/${contest.id}`;
         const response = await http.post(`/admin/${post_url}`, {
             name: contest_elements.name.value,
             description: contest_elements.description.value,

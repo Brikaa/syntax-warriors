@@ -39,3 +39,14 @@ module.exports.validate_and_filter_contest_info = (contest_info) => {
         test_cases: filtered_test_cases
     };
 };
+
+module.exports.insert_test_cases = async (db, contest_id, test_cases) => {
+    const test_cases_2d = test_cases.map((i) => [i.input, i.output, contest_id]);
+    const test_cases_query_values = test_cases.map((i, index) => `(${index}, ?)`);
+    await db.query(
+        `insert into test_cases (id, input, output, contest_id) values ${test_cases_query_values.join(
+            ', '
+        )}`,
+        test_cases_2d
+    );
+}

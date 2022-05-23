@@ -27,15 +27,7 @@ router.post('/create_contest', async (req, res, next) => {
             [name, description, start_date, end_date]
         );
 
-        const test_cases_2d = test_cases.map((i) => [i.input, i.output, contest_packet.insertId]);
-        const test_cases_query_values = test_cases.map((i, index) => `(${index}, ?)`);
-        await db.query(
-            `insert into test_cases (id, input, output, contest_id) values ${test_cases_query_values.join(
-                ', '
-            )}`,
-            test_cases_2d
-        );
-
+        await contests_helper.insert_test_cases(db, contest_packet.insertId, test_cases);
         return res.status(200).send();
     } catch (e) {
         next(e);
@@ -76,6 +68,32 @@ router.post('/get_contest/:id', async (req, res, next) => {
             contest,
             test_cases
         });
+    } catch (e) {
+        next(e);
+    }
+});
+
+router.post('/update_contest/:id', async (req, res, next) => {
+    try {
+        if (!req.params.hasOwnProperty('id')) {
+            throw BadRequestException('A contest id must be provided in the request parameters');
+        }
+        const { name, description, start_date, end_date, test_cases } =
+            contests_helper.validate_and_filter_contest_info(req.body);
+        const db = req.app.locals.db;
+        const contests = await db.query('select id from contests where id = ?', [req.params.id]);
+        if (contests.length < 1) {
+            throw BadRequestException('Could not find a contest with the specified id');
+        }
+        const contest = contests[0];
+        await db.query(
+            'update contests set name = ?, description = ?, start_date = ?, end_date = ? where id = ?',
+            [name, description, start_date, end_date, contest.id]
+        );
+
+        await db.query('delete from test_cases where contest_id = ?', [contest.id]);
+        await contests_helper.insert_test_cases(db, contest.id, test_cases);
+        return res.status(200).send();
     } catch (e) {
         next(e);
     }
