@@ -11,7 +11,7 @@ on the API endpoints are POST requests.
 
 ## Building the project
 ### Prerequisites
-- NodeJS
+- NodeJS (>= 18)
 - NPM
 - MySQL (Docker images are ok)
 
