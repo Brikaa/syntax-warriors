@@ -28,8 +28,9 @@ on the API endpoints are POST requests.
 9. Access the website at `127.0.0.1:3000`, port `3000`
 
 ## Team members
-- Omar Adel Brikaa
-- Ahmed Wael Wanas
-- Mootaz Medhat AbdelWahab
-- Ali Esmat Orfi
-- Adham Hazem Shafhei
+Team members
+- Omar Adel Abdel Hamid Ahmed Brikaa - 20206043
+- Ahmed Wael Nagy Wanas - 20206008
+- Adham Hazem Fahmy Shafhei - 20206011
+- Ali Esmat Ahmed Orfi - 20206123
+- Mootaz Medhat Ezzat AbdelWahab - 20206074

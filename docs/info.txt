@@ -1,0 +1,12 @@
+Syntax Warriors is a full-stack web application for programming contests.
+Users submit solutions to contests, their code is executed using a code execution engine
+and the execution result is checked against a pre-defined set of inputs and outputs.
+
+The technologies that are used are: NodeJS, MySQL, ExpressJS
+
+Team members
+Omar Adel Abdel Hamid Ahmed Brikaa - 20206043
+Ahmed Wael Nagy Wanas - 20206008
+Adham Hazem Fahmy Shafhei - 20206011
+Ali Esmat Ahmed Orfi - 20206123
+Mootaz Medhat Ezzat AbdelWahab - 20206074
